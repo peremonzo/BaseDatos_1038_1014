@@ -131,6 +131,8 @@ CREATE TABLE Movil (
 CREATE TABLE Nivel (
     cod_nivel varchar(1)  NOT NULL,
     nombre varchar(10)  NOT NULL,
+    horas_min int NOT NULL,
+    horas_max int NOT NULL,
     CONSTRAINT Nivel_pk PRIMARY KEY (cod_nivel)
 );
 
