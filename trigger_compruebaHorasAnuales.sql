@@ -86,3 +86,24 @@ CREATE TRIGGER TrgHorasAct
 AFTER INSERT OR DELETE OR UPDATE of horas, operario_dni ON maneja
 FOR EACH ROW
 EXECUTE PROCEDURE FunHorasAct();
+
+CREATE TRIGGER TrgHorasAct
+AFTER INSERT OR DELETE OR UPDATE of horas, operario_dni ON maneja
+FOR EACH ROW
+EXECUTE PROCEDURE FunHorasAct();
+
+CREATE OR REPLACE FUNCTION FunHorasMax() RETURNS TRIGGER AS '
+BEGIN
+IF NEW.horas_act > NEW.horas_max THEN
+	RAISE EXCEPTION ''El operario con dni % no puede tener mas horas_act que horas_max'', NEW.dni;
+END IF;
+RETURN NEW;
+END;
+'LANGUAGE 'plpgsql';
+
+CREATE TRIGGER TrgHorasMax
+BEFORE INSERT OR UPDATE ON operario
+FOR EACH ROW
+EXECUTE PROCEDURE FunHorasMax();
+
+
