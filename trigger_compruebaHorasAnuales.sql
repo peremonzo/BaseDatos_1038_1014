@@ -31,7 +31,7 @@ IF TG_OP=''INSERT''THEN
 		END IF;
 	END IF;
 
-ELSE IF TG_OP=''UPDATE''THEN
+ELSIF TG_OP=''UPDATE'' THEN
 	IF EXTRACT(YEAR FROM f_ini) = EXTRACT(YEAR FROM COALESCE(f_fin, CURRENT_DATE)) THEN
 		IF NEW.operario_dni != OLD.operario_dni THEN
 			SELECT horas_max INTO h_max
@@ -75,11 +75,10 @@ ELSE
 	IF EXTRACT(YEAR FROM OLD.f_ini) = EXTRACT(YEAR FROM COALESCE(OLD.f_fin, CURRENT_DATE)) THEN
 		UPDATE operario SET horas_act = horas_act - OLD.horas WHERE dni = OLD.dni;
 	END IF;
-
 END IF;
 RETURN NEW;
 END;
-'LANGUAGE 'plpgsql';
+' LANGUAGE 'plpgsql';
 
 
 
@@ -87,10 +86,6 @@ CREATE TRIGGER TrgHorasAct
 AFTER INSERT OR DELETE OR UPDATE of horas, operario_dni ON maneja
 FOR EACH ROW
 EXECUTE PROCEDURE FunHorasAct();
-
-
-
-
 
 
 
