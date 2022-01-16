@@ -1,12 +1,12 @@
 -- Created by Vertabelo (http://vertabelo.com)
--- Last modification date: 2021-10-03 11:30:27.972
+-- Last modification date: 2022-01-15 18:54:48.916
 
 -- tables
 -- Table: Administrador
 CREATE TABLE Administrador (
     DNI varchar(9)  NOT NULL,
     turno char(1)  NOT NULL,
-    horas_extra int  NOT NULL,
+    horas_extra integer  NOT NULL,
     CONSTRAINT Administrador_pk PRIMARY KEY (DNI)
 );
 
@@ -26,8 +26,8 @@ CREATE TYPE nombre_estado AS ENUM (
 
 CREATE TABLE Estado (
     codigo varchar(9)  NOT NULL,
-    f_ini date	NOT NULL,
-    f_fin date	NULL,
+    f_ini int  NOT NULL,
+    f_fin int  NULL,
     nombre nombre_estado  NOT NULL,
     CONSTRAINT Estado_pk PRIMARY KEY (codigo,f_ini)
 );
@@ -76,9 +76,9 @@ CREATE TABLE Maneja (
     operario_DNI varchar(9)  NOT NULL,
     cod_maquina varchar(20)  NOT NULL,
     turno turno  NOT NULL,
-    f_ini date	NOT NULL,
+    f_ini date  NOT NULL,
     horas int  NOT NULL,
-    f_fin date	NULL,
+    f_fin date  NULL,
     CONSTRAINT fechas CHECK (f_ini < f_fin) NOT DEFERRABLE INITIALLY IMMEDIATE,
     CONSTRAINT Maneja_pk PRIMARY KEY (cod_maquina,turno,f_ini)
 );
@@ -104,7 +104,7 @@ CREATE TABLE Maquina (
     f_compra date  NOT NULL,
     nombre varchar(20)  NOT NULL,
     posicion_linea int  NOT NULL,
-    codlinea	VARCHAR(20)	NOT NULL,
+    codlinea varchar(20)  NOT NULL,
     CONSTRAINT Maquina_pk PRIMARY KEY (codigo)
 );
 
@@ -131,8 +131,9 @@ CREATE TABLE Movil (
 CREATE TABLE Nivel (
     cod_nivel varchar(1)  NOT NULL,
     nombre varchar(10)  NOT NULL,
-    horas_min int NOT NULL,
-    horas_max int NOT NULL,
+    horas_min int  NOT NULL,
+    horas_max int  NOT NULL,
+    CONSTRAINT comprobarHoras CHECK (horas_min <= horas_max) NOT DEFERRABLE INITIALLY IMMEDIATE,
     CONSTRAINT Nivel_pk PRIMARY KEY (cod_nivel)
 );
 
@@ -144,6 +145,7 @@ CREATE TABLE Operario (
     nivel varchar(1)  NOT NULL,
     fecha_responsable date  NULL,
     cod_linea_responsable varchar(20)  NULL,
+    horas_act int  NOT NULL,
     CONSTRAINT Operario_pk PRIMARY KEY (DNI)
 );
 
@@ -221,7 +223,7 @@ CREATE TABLE Trabajador (
     nombre varchar(20)  NOT NULL,
     apellidos varchar(40)  NOT NULL,
     cod_postal varchar(5)  NOT NULL,
-    calle varchar(50)  NOT NULL,
+    calle varchar(20)  NOT NULL,
     numero int  NOT NULL,
     correo_e varchar(20)  NOT NULL,
     salario int  NOT NULL,
@@ -321,6 +323,16 @@ ALTER TABLE Incompatible_pieza ADD CONSTRAINT Incompatible_pieza_Pieza_2
     FOREIGN KEY (codigoP_2)
     REFERENCES Pieza (codigo)
     ON DELETE  CASCADE 
+    ON UPDATE  CASCADE 
+    NOT DEFERRABLE 
+    INITIALLY IMMEDIATE
+;
+
+-- Reference: Linea_produccion_Maquina (table: Maquina)
+ALTER TABLE Maquina ADD CONSTRAINT Linea_produccion_Maquina
+    FOREIGN KEY (codlinea)
+    REFERENCES Linea_produccion (codigo)
+    ON DELETE  RESTRICT 
     ON UPDATE  CASCADE 
     NOT DEFERRABLE 
     INITIALLY IMMEDIATE
@@ -575,16 +587,6 @@ ALTER TABLE mayor_igual_que ADD CONSTRAINT mayor_igual_que_Nivel_2
     NOT DEFERRABLE 
     INITIALLY IMMEDIATE
 ;
-
-ALTER TABLE maquina ADD CONSTRAINT codline_maquina
-    FOREIGN KEY (codlinea)
-    REFERENCES linea_produccion (codigo)
-    ON DELETE  CASCADE 
-    ON UPDATE  CASCADE 
-    NOT DEFERRABLE 
-    INITIALLY IMMEDIATE
-;
-
 
 -- End of file.
 
